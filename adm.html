@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADM | Controle de Acessos Honda</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --honda-red: #cc0000;
+            --gold: #c5a059;
+            --black: #0d0d0d;
+        }
+
+        body {
+            background-color: var(--black);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .admin-card {
+            background: #1a1a1a;
+            border: 2px solid var(--gold);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(204, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Orbitron';
+            font-size: 1rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .counter-box {
+            background: #000;
+            border: 1px solid #333;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .number {
+            font-family: 'Orbitron';
+            font-size: 4rem;
+            font-weight: 900;
+            color: #fff;
+            display: block;
+        }
+
+        .label {
+            color: #888;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            border-radius: 20px;
+            font-size: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-reset {
+            margin-top: 30px;
+            background: transparent;
+            border: 1px solid #333;
+            color: #444;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-reset:hover {
+            color: var(--honda-red);
+            border-color: var(--honda-red);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-card">
+        <img src="https://www.honda.com.br/motos/sites/hda/themes/hondahda/assets/img/honda-horizontal.svg" class="logo">
+        <h1>Painel de Controle</h1>
+
+        <div class="counter-box">
+            <span class="number" id="acessos-count">0</span>
+            <span class="label">Pessoas acessaram o site</span>
+        </div>
+
+        <div class="status">● BANCO DE DADOS CONECTADO</div>
+
+        <br>
+        <button class="btn-reset" onclick="resetAcessos()">Zerar Contador</button>
+    </div>
+
+    <script>
+        // --- COLOQUE AS SUAS CHAVES DO FIREBASE AQUI ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-KhGjvGURpZ8RwohWVezKOXLlRCGfecw",
+            authDomain: "honda-50-anos.firebaseapp.com",
+            databaseURL: "https://honda-50-anos-default-rtdb.firebaseio.com",
+            projectId: "honda-50-anos",
+            storageBucket: "honda-50-anos.firebasestorage.app",
+            messagingSenderId: "339048717487",
+            appId: "1:339048717487:web:3c192d764be8fd53b4c85a"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Referência do contador
+        const acessosRef = db.ref('site/total_acessos');
+
+        // Escutar mudanças em tempo real
+        acessosRef.on('value', (snapshot) => {
+            const qtd = snapshot.val() || 0;
+            document.getElementById('acessos-count').innerText = qtd;
+            
+            // Pequena animação ao mudar o número
+            document.getElementById('acessos-count').classList.add('animate__animated', 'animate__bounceIn');
+            setTimeout(() => {
+                document.getElementById('acessos-count').classList.remove('animate__bounceIn');
+            }, 500);
+        });
+
+        // Função para resetar (CUIDADO)
+        function resetAcessos() {
+            if(confirm("Deseja realmente zerar todos os acessos?")) {
+                acessosRef.set(0);
+            }
+        }
+    </script>
+</body>
+</html>
