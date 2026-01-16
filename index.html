@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HONDA CG 160 TITAN | 50 ANOS - LANÇAMENTO MUNDIAL</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --honda-red: #cc0000;
+            --gold: #c5a059;
+            --black: #000000;
+            --dark: #080808;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--black);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* TELA DE CARREGAMENTO / ENTRADA */
+        #launch-gate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            z-index: 10000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+        }
+
+        .btn-main {
+            background: linear-gradient(45deg, var(--honda-red), #600);
+            color: white; border: none; padding: 25px 60px;
+            font-family: 'Orbitron'; font-size: 1.4rem; font-weight: 900;
+            cursor: pointer; border-radius: 2px;
+            box-shadow: 0 0 50px rgba(204, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        .btn-main:hover { transform: scale(1.1) rotate(-1deg); box-shadow: 0 0 80px var(--honda-red); }
+
+        /* VIDEO */
+        .video-section { height: 100vh; width: 100%; background: #000; display: flex; align-items: center; justify-content: center; }
+        #video-frame { width: 90%; max-width: 1200px; aspect-ratio: 16/9; border: 1px solid var(--gold); opacity: 0; box-shadow: 0 0 100px rgba(197, 160, 89, 0.2); }
+
+        /* CONTEUDO PRINCIPAL */
+        #moto-content { display: none; opacity: 0; }
+
+        .hero-banner {
+            height: 100vh; width: 100%; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            background-attachment: fixed; background-position: center; background-size: cover;
+            background-image: url('https://www.honda.com.br/motos/sites/hda/files/2026-01/Moto-cg-vis%C3%A3o-lateral-direita-frontal_1.webp');
+        }
+        .hero-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(0deg, #000 10%, transparent 100%); }
+
+        .section-header { text-align: center; padding: 100px 5%; }
+        .section-header h2 { font-family: 'Orbitron'; font-size: clamp(2rem, 8vw, 4.5rem); color: var(--gold); margin: 0; letter-spacing: -2px; }
+        .section-header p { font-size: 1.3rem; color: #888; max-width: 800px; margin: 20px auto; line-height: 1.6; }
+
+        /* GRID SEM MOLDURA */
+        .feature-row { 
+            display: flex; flex-wrap: wrap; align-items: center; 
+            min-height: 80vh; overflow: hidden;
+        }
+        .feature-row:nth-child(even) { flex-direction: row-reverse; }
+        .feature-image { flex: 1 1 50%; min-width: 350px; height: 80vh; }
+        .feature-image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: 1s ease; }
+        .feature-text { flex: 1 1 50%; padding: 10% 8%; background: var(--black); z-index: 2; }
+        .feature-text h3 { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--gold); margin-bottom: 25px; border-left: 5px solid var(--honda-red); padding-left: 20px; }
+        .feature-text p { font-size: 1.2rem; line-height: 1.8; color: #bbb; }
+
+        /* TABELA TÉCNICA GIGANTE */
+        .specs-section { padding: 100px 5%; background: var(--dark); }
+        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .spec-group h4 { font-family: 'Orbitron'; color: var(--honda-red); font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .spec-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #222; font-size: 1rem; }
+        .spec-label { color: #666; font-weight: bold; }
+        .spec-value { color: #fff; text-align: right; }
+
+        /* GALERIA FULL WIDTH */
+        .full-gallery { display: flex; flex-wrap: wrap; padding: 5px; background: #000; }
+        .gallery-item { flex: 1 1 300px; height: 400px; overflow: hidden; padding: 5px; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; cursor: pointer; }
+        .gallery-item img:hover { transform: scale(1.1); filter: brightness(1.2); }
+
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 768px) {
+            .feature-image { height: 50vh; }
+            .feature-text { padding: 50px 30px; }
+            .feature-text h3 { font-size: 1.8rem; }
+            .btn-main { width: 80%; padding: 20px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body onscroll="playSwipeSound()">
+
+    <audio id="snd-click"><source src="https://www.soundjay.com/buttons/sounds/button-19.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-rev"><source src="https://www.soundjay.com/mechanical/sounds/motorcycle-revving-1.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-swipe"><source src="https://www.soundjay.com/mechanical/sounds/mechanical-clonk-1.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-confetti"><source src="https://www.soundjay.com/mechanical/sounds/firework-show-01.mp3" type="audio/mpeg"></audio>
+    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg"></audio>
+
+    <div id="launch-gate">
+        <img src="https://www.honda.com.br/motos/themes/custom/honda_motos/logo.svg" style="width: 200px; margin-bottom: 40px;" class="animate__animated animate__pulse animate__infinite">
+        <h1 style="font-family: 'Orbitron'; font-weight: 900; font-size: 2.5rem; margin-bottom: 50px;">CG 160 TITAN <br> <span style="color: var(--gold);">50 ANOS</span></h1>
+        <button class="btn-main" onclick="startShow()">LIGAR MOTORES</button>
+    </div>
+
+    <section class="video-section" id="v-area">
+        <div id="video-frame"><div id="player"></div></div>
+    </section>
+
+    <main id="moto-content">
+        <div class="hero-banner">
+            <div class="hero-overlay"></div>
+            <div style="z-index: 10; text-align: center;">
+                <h2 class="animate-box" style="font-family: 'Orbitron'; font-size: clamp(3rem, 10vw, 6rem); color: #fff; text-shadow: 0 0 30px rgba(0,0,0,0.8);">A LENDA</h2>
+                <p class="animate-box" style="letter-spacing: 10px; color: var(--gold); font-weight: 900;">1976 - 2026</p>
+            </div>
+        </div>
+
+        <section class="section-header animate-box">
+            <h2>EDICAO COMEMORATIVA</h2>
+            <p>Celebrando cinco décadas de liderança e inovação, a Honda apresenta a "CG 50 Anos”, uma edição especial que homenageia a trajetória de um dos modelos mais importantes do Brasil. Nascida da fábrica que há meio século impulsiona sonhos e caminhos, essa edição comemorativa é um tributo à história que move o país.</p>
+        </section>
+
+        <div class="feature-row">
+            <div class="feature-image animate-box"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Moto-cg-vis%C3%A3o-lateral-direita_5.webp"></div>
+            <div class="feature-text animate-box">
+                <h3>DESIGN 50 ANOS</h3>
+                <p>O visual foi pensado para celebrar o marco de 50 anos da CG. Os grafismos e a cor foram desenvolvidos pela equipe de Design da Honda Brasil, todos símbolo da mobilidade brasileira. Robustez e elegância em cada detalhe metálico.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image animate-box"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Close-up-amortecedor-honda-cg_0.webp"></div>
+            <div class="feature-text animate-box">
+                <h3>NOVO AMORTECEDOR</h3>
+                <p>Na edição comemorativa da CG, ela conta com um amortecedor vermelho exclusivo para reforçar o estilo e garantir uma presença ainda mais marcante nas ruas, unindo performance com visual agressivo.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image animate-box"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Chave-moto-Cg-Honda_0.webp"></div>
+            <div class="feature-text animate-box">
+                <h3>CHAVE EXCLUSIVA</h3>
+                <p>Para a edição especial, foi desenvolvida uma chave exclusiva com o logo gravado que mostra a autenticidade e o orgulho de pilotar essa lenda. Um item de colecionador para quem vive a história Honda.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image animate-box"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/roda-moto-honda-vista-lateral_0.webp"></div>
+            <div class="feature-text animate-box">
+                <h3>CORES DE RODA</h3>
+                <p>Uma nova cor da roda traz personalidade e sofisticação, destacando o visual marcante que tem essa edição. Rodas de liga leve com acabamento premium para destacar o dourado da vitória.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image animate-box"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Visao-traseira-da-lanterna-moto-CG_0.webp"></div>
+            <div class="feature-text animate-box">
+                <h3>ILUMINAÇÃO FULL LED</h3>
+                <p>Com LED no farol e lanterna, a CG 50 anos garante mais visibilidade e destaca o design arrojado da CG160 Titan. Segurança e tecnologia de ponta para rodar dia e noite.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image animate-box"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Painel-moto-honda-cg_0.webp"></div>
+            <div class="feature-text animate-box">
+                <h3>PAINEL DIGITAL BLACKOUT</h3>
+                <p>Moderno e funcional, o painel digital com fundo blackout oferece ótima visibilidade, além de indicador de marchas e indicador de consumo instantâneo. Tudo o que você precisa em um olhar.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image animate-box"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/caregador-conectado-em-moto-cg-honda_0.webp"></div>
+            <div class="feature-text animate-box">
+                <h3>CONECTIVIDADE USB-C</h3>
+                <p>Com entrada USB-C a CG Titan permite que você carregue seu dispositivo onde quer que esteja. A evolução da mobilidade conectada no seu dia a dia.</p>
+            </div>
+        </div>
+
+        <section class="specs-section animate-box">
+            <h2 style="font-family: 'Orbitron'; text-align: center; font-size: 3rem; margin-bottom: 60px;">FICHA TÉCNICA</h2>
+            <div class="specs-grid">
+                <div class="spec-group">
+                    <h4>MOTOR</h4>
+                    <div class="spec-item"><span class="spec-label">Tipo</span><span class="spec-value">OHC, Monocilíndrico 4 tempos</span></div>
+                    <div class="spec-item"><span class="spec-label">Cilindrada</span><span class="spec-value">162,7 cc</span></div>
+                    <div class="spec-item"><span class="spec-label">Potência Máxima</span><span class="spec-value">14,7 CV (Etanol) / 14,4 CV (Gasolina)</span></div>
+                    <div class="spec-item"><span class="spec-label">Torque Máximo</span><span class="spec-value">1,43 kgf.m (Etanol) / 1,41 kgf.m (Gasolina)</span></div>
+                    <div class="spec-item"><span class="spec-label">Combustível</span><span class="spec-value">Gasolina e/ou Etanol (FlexOne)</span></div>
+                </div>
+                <div class="spec-group">
+                    <h4>CHASSI E FREIOS</h4>
+                    <div class="spec-item"><span class="spec-label">Tipo</span><span class="spec-value">Diamond Frame</span></div>
+                    <div class="spec-item"><span class="spec-label">Suspensão Diant.</span><span class="spec-value">Garfo telescópico / 135mm</span></div>
+                    <div class="spec-item"><span class="spec-label">Freio Dianteiro</span><span class="spec-value">A disco / 240 mm (ABS)</span></div>
+                    <div class="spec-item"><span class="spec-label">Freio Traseiro</span><span class="spec-value">A disco / 220 mm</span></div>
+                    <div class="spec-item"><span class="spec-label">Pneu Traseiro</span><span class="spec-value">100/80 -18M/C 59S</span></div>
+                </div>
+                <div class="spec-group">
+                    <h4>DIMENSÕES</h4>
+                    <div class="spec-item"><span class="spec-label">Tanque</span><span class="spec-value">14 litros</span></div>
+                    <div class="spec-item"><span class="spec-label">Peso Seco</span><span class="spec-value">120 kg</span></div>
+                    <div class="spec-item"><span class="spec-label">Altura Assento</span><span class="spec-value">796 mm</span></div>
+                    <div class="spec-item"><span class="spec-label">Comprimento</span><span class="spec-value">2030 mm</span></div>
+                    <div class="spec-item"><span class="spec-label">Bateria</span><span class="spec-value">12V - 4 Ah</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="full-gallery animate-box">
+            <div class="gallery-item"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Galeria%201_0.webp" onclick="playClick()"></div>
+            <div class="gallery-item"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Galeria%202_0.webp" onclick="playClick()"></div>
+            <div class="gallery-item"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Galeria%203_0.webp" onclick="playClick()"></div>
+            <div class="gallery-item"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Galeria%204_0.webp" onclick="playClick()"></div>
+            <div class="gallery-item"><img src="https://www.honda.com.br/motos/sites/hda/files/2026-01/Galeria%205_0.webp" onclick="playClick()"></div>
+        </section>
+
+        <footer style="padding: 100px 5%; text-align: center; border-top: 1px solid #222;">
+            <img src="https://www.honda.com.br/motos/themes/custom/honda_motos/logo.svg" style="width: 150px; opacity: 0.5; margin-bottom: 30px;">
+            <p style="color: #444;">© 2026 HONDA MOTOS BRASIL - PROIBIDA REPRODUÇÃO TOTAL OU PARCIAL.</p>
+            <button class="btn-main" onclick="window.scrollTo(0,0)" style="margin-top: 40px; font-size: 0.8rem; padding: 15px 30px;">VOLTAR AO TOPO</button>
+        </footer>
+    </main>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+        let lastScroll = 0;
+        gsap.registerPlugin(ScrollTrigger);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%', width: '100%', videoId: '1x5WNEfNwqE',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'modestbranding': 1, 'showinfo': 0 },
+                events: { 'onStateChange': onPlayerStateChange }
+            });
+        }
+
+        function playSwipeSound() {
+            let currentScroll = window.pageYOffset;
+            if (Math.abs(currentScroll - lastScroll) > 500) {
+                document.getElementById('snd-swipe').volume = 0.2;
+                document.getElementById('snd-swipe').play();
+                lastScroll = currentScroll;
+            }
+        }
+
+        function playClick() { document.getElementById('snd-click').play(); }
+
+        function startShow() {
+            playClick();
+            document.getElementById('snd-rev').play();
+            gsap.to("#launch-gate", { y: "-100%", duration: 1.5, ease: "expo.inOut" });
+            gsap.to("#video-frame", { opacity: 1, duration: 1, delay: 1 });
+            setTimeout(() => { player.playVideo(); player.unMute(); }, 2000);
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                // EFEITOS DE AUDIO FINAIS
+                document.getElementById('snd-confetti').play();
+                document.getElementById('snd-rev').play();
+
+                // FOGOS DE ARTIFICIO
+                var duration = 5 * 1000;
+                var animationEnd = Date.now() + duration;
+                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+                function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+                var interval = setInterval(function() {
+                    var timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) return clearInterval(interval);
+                    var particleCount = 50 * (timeLeft / duration);
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                }, 250);
+
+                // MUSICA E CONTEUDO
+                setTimeout(() => {
+                    const bgm = document.getElementById('bg-music');
+                    bgm.volume = 0;
+                    bgm.play();
+                    gsap.to(bgm, { volume: 0.5, duration: 3 });
+
+                    const content = document.getElementById('moto-content');
+                    content.style.display = 'block';
+                    gsap.to(content, { opacity: 1, duration: 2 });
+                    gsap.to(window, { scrollTo: "#moto-content", duration: 3, ease: "power4.inOut" });
+
+                    // ANIMAÇÕES DE SCROLL
+                    document.querySelectorAll('.animate-box').forEach((el) => {
+                        gsap.from(el, {
+                            scrollTrigger: { trigger: el, start: "top 85%" },
+                            y: 100, opacity: 0, duration: 1.5, ease: "power3.out"
+                        });
+                    });
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
